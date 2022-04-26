@@ -1,6 +1,11 @@
 from fastapi import FastAPI
-from src.db.database import Base, engine
+from src.orm import database
 
-app = FastAPI()
 
-Base.metadata.create_all(engine)
+def init_api():
+    app = FastAPI()
+    database.Base.metadata.create_all(database.engine)
+    return app
+
+
+app: FastAPI = init_api()

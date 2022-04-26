@@ -3,7 +3,7 @@ from fastapi.testclient import TestClient
 from sqlalchemy.exc import ProgrammingError
 
 
-from src.db.database import Base
+from src.orm import database
 from src.main import app
 from src.repositories.session import DatabaseSession
 from tests.utils.testing_session import DatabaseTestingSession, engine
@@ -14,7 +14,7 @@ def setup_database():
     """Fixture that setup the database with a
     functon socpe.
     This guaranteed an empty db for each test"""
-    for table in reversed(Base.metadata.sorted_tables):
+    for table in reversed(database.Base.metadata.sorted_tables):
         try:
             engine.execute(table.delete())
             # Dont know how to reset the autoincrement without crashing the db
@@ -22,7 +22,7 @@ def setup_database():
         except ProgrammingError:
             pass
 
-    Base.metadata.create_all(bind=engine)
+    database.Base.metadata.create_all(bind=engine)
 
 
 @pytest.fixture

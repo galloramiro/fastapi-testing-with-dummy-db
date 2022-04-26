@@ -1,4 +1,4 @@
-from src.db.database import SessionLocal
+from src.orm.database import SessionLocal
 from src.repositories.interface import DatabaseSessionInterface
 
 
