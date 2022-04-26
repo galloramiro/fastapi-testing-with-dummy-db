@@ -1,6 +1,6 @@
 import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy.exc import ProgrammingError
+from sqlalchemy.exc import ProgrammingError, OperationalError
 
 
 from src.orm import database
@@ -19,7 +19,7 @@ def setup_database():
             engine.execute(table.delete())
             # Dont know how to reset the autoincrement without crashing the db
             # engine.execute(f"ALTER TABLE {table.fullname} AUTO_INCREMENT = 1;")
-        except ProgrammingError:
+        except (ProgrammingError, OperationalError):
             pass
 
     database.Base.metadata.create_all(bind=engine)
