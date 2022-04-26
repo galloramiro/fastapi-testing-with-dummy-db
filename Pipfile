@@ -6,8 +6,9 @@ verify_ssl = true
 [packages]
 attrs = {index = "pypi",version = "==21.4.0"}
 fastapi = {index = "pypi",version = "==0.75.2"}
-uvicorn = {extras = ["standard"], version = "==0.17.6", index = "pypi"}
+requests = {index = "pypi",version = "==2.27.1"}
 sqlalchemy = {index = "pypi",version = "==1.4.35"}
+uvicorn = {extras = ["standard"], version = "==0.17.6", index = "pypi"}
 
 [dev-packages]
 pytest = {index = "pypi",version = "==7.0.1"}
