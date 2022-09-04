@@ -1,0 +1,28 @@
+version: '3'
+services:
+  fastapi-testing-with-dummy-db:
+    image: fastapi-testing-with-dummy-db:latest
+    ports:
+      - 5000:5000
+    volumes:
+      - ./src:/app/src
+      - ./migrations:/app/migrations
+    command: bash -c "poetry run newrelic-admin run-program gunicorn -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:5000 src.main:app --workers=3"
+    environment:
+      RUN_MIGRATIONS: "true"
+      EXIT_AFTER_MIGRATIONS: "false"
+      PYTHONPATH: ${PYTHONPATH}:src
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:5.7
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: "dummy-db"
+      MYSQL_USER: "dummy-user"
+    volumes:
+      - ./data:/docker-entrypoint-initdb.d

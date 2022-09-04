@@ -131,3 +131,9 @@ dmypy.json
 
 local.db
 test.db
+
+# Test output files
+tests/*.xml
+tests/cov
+tests/.coverage
+tests/test.db

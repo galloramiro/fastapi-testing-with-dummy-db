@@ -3,11 +3,23 @@ import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+from src import config
 from src.repositories.interface import DatabaseSessionInterface
 
-TESTING_DATABASE_URL = os.getenv("TESTING_DATABASE_URL", "sqlite:///./test.db")
+
+user = config.DATABASE_USER
+password = config.DATABASE_PASSWORD
+host = config.TEST_DATABASE_HOST
+port = config.DATABASE_PORT
+database_name = config.TEST_DATABASE_NAME
+SQLALCHEMY_DATABASE_URL = f"mysql+pymysql://{user}:{password}@{host}:{port}/{database_name}"
+
 engine = create_engine(
-    TESTING_DATABASE_URL, connect_args=dict(check_same_thread=False)
+    SQLALCHEMY_DATABASE_URL,
+    pool_size=250,
+    max_overflow=500,
+    pool_pre_ping=True,
+    pool_recycle=3600,
 )
 
 
