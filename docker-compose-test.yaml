@@ -1,0 +1,28 @@
+version: '3'
+services:
+  mysql-test:
+    image: mysql:5.7
+    restart: always
+    ports:
+      - "12345:3306"
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: "dummy-db-test"
+      MYSQL_USER: "dummy-user"
+    volumes:
+      - ./data:/docker-entrypoint-initdb.d
+
+  fastapi-testing-with-dummy-db-test:
+    image: fastapi-testing-with-dummy-db:test
+    volumes:
+      - ./src:/app/src
+      - ./migrations:/app/migrations
+      - ./tests:/app/tests
+      - ./data:/app/data
+    environment:
+      RUN_MIGRATIONS: "false"
+      EXIT_AFTER_MIGRATIONS: "false"
+      COVERAGE_FILE: "/app/tests/.coverage"
+    depends_on:
+      - mysql-test
+    command: bash -c "sleep 10s && poetry run pytest --junitxml=tests/unit.xml -v tests && pipenv run stdout-report && pipenv run generate-report"

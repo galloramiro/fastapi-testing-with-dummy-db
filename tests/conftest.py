@@ -1,5 +1,6 @@
 import pytest
 from fastapi.testclient import TestClient
+from sqlalchemy.orm.session import close_all_sessions
 from sqlalchemy.exc import ProgrammingError, OperationalError
 
 
@@ -11,17 +12,16 @@ from tests.utils.testing_session import DatabaseTestingSession, engine
 
 @pytest.fixture
 def setup_database():
-    """Fixture that setup the database with a
-    functon socpe.
-    This guaranteed an empty db for each test"""
-    for table in reversed(database.Base.metadata.sorted_tables):
-        try:
-            engine.execute(table.delete())
-            # Dont know how to reset the autoincrement without crashing the db
-            # engine.execute(f"ALTER TABLE {table.fullname} AUTO_INCREMENT = 1;")
-        except (ProgrammingError, OperationalError):
-            pass
+    """
+    Fixture that setup the database with a functon socpe.
+    This guaranteed an empty db for each test
 
+    Fix to sqlalchemy freezingin drop_all:
+        - https://stackoverflow.com/questions/24289808/drop-all-freezes-in-flask-with-sqlalchemy
+        - https://docs.sqlalchemy.org/en/14/orm/session_api.html?highlight=close_all
+    """
+    close_all_sessions()
+    database.Base.metadata.drop_all(bind=engine)
     database.Base.metadata.create_all(bind=engine)
 
 
