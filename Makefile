@@ -44,7 +44,7 @@ test: test-clean ## Run service unit tests.
 debug: test-clean ## Run service unit tests.
 	docker-compose stop
 	docker-compose --file docker-compose-test.yaml run $(CONTAINER_NAME)-test \
-	/bin/bash -c "pipenv run pytest ${test_dir} -s -v"
+	/bin/bash -c "poetry run pytest ${test_dir} -s -v"
 
 .PHONY: create-migration
 create-migration: ## Create migration.
